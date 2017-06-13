@@ -1,0 +1,8 @@
+prefix=/home/dhri-dz/catkin_ws/src/test_use/build/devel
+
+Name: test_use
+Description: Description of test_use
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/dhri-dz/catkin_ws/src/test_use/build/devel/lib 
+Requires: 

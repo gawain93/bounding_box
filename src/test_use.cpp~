@@ -1,0 +1,49 @@
+#include <ros/ros.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <message_filters/subscriber.h>
+#include <rosbag/bag.h>
+#include <pcl/point_types.h>
+#include <rosbag/view.h>
+#include <pcl_conversions/pcl_conversions.h>
+
+#include <boost/foreach.hpp>
+#include <iostream>
+
+typedef pcl::PointXYZRGB PointT;
+
+size_t query_index = 0;
+sensor_msgs::PointCloud2::Ptr current_frame;
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_frame;
+ 
+int main(int argc, char** argv)
+{
+         
+  ros::init (argc, argv, "test_use");
+  ros::NodeHandle nh;
+  rosbag::Bag bag;
+  bag.open("/home/dhri-dz/catkin_ws/save/cp_save.bag", rosbag::bagmode::Read);
+  
+  rosbag::View view(bag, rosbag::TopicQuery("/camera/depth_registered/points"));
+  BOOST_FOREACH(rosbag::MessageInstance const m, view)    // loop through view
+    {
+       current_frame = m.instantiate<sensor_msgs::PointCloud2>();   // return the pointer of the message
+       if (current_frame != NULL)
+       {
+	 pcl::fromROSMsg(*current_frame,*pcl_frame);
+	 std::cout << query_index++ << std::endl;
+	 std::cout  << "The Size of the point cloud is : " << pcl_frame -> size() << std::endl;
+	 std::cout  << "The Height of the point cloud is : " << pcl_frame -> height << std::endl;
+	 std::cout  << "The Width of the point cloud is : " << pcl_frame -> width << std::endl;
+	 /*
+	 for (size_t i = 0; i < pcl_frame-> size(); ++i)
+             std::cout << " " << pcl_frame->points[i].x
+                       << " " << pcl_frame->points[i].y
+                       << " " << pcl_frame->points[i].z << std::endl;	
+         */
+       }
+     }
+    
+    bag.close();
+    
+return (0);
+}  

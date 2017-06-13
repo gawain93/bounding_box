@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/dhri-dz/catkin_ws/src/test_use/build/devel/setup.sh
