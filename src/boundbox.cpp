@@ -3,6 +3,44 @@
 boundbox::boundbox(std::string fid)
 {
   frame_id=fid;
+  q_index = 0;
+  first_hand_found = 0;
+  
+  StateSize = 6;
+  MeasureSize = 3;
+  ColtrolSize = 0;
+  type = CV_32F;
+  
+  KF = new cv::KalmanFilter( StateSize, MeasureSize ,ColtrolSize ,type);
+  state = new cv::Mat(StateSize,1,type);
+  measure = new cv::Mat(MeasureSize,1,type);
+  // transitionMatrix is assumed using linear moving model as:
+  // [1 0 0 dt 0 0]
+  // [0 1 0 0 dt 0]
+  // [0 0 1 0 0 dt]
+  // [0 0 0 1 0 0 ]
+  // [0 0 0 0 1 0 ]
+  // [0 0 0 0 0 1 ]
+  KF ->transitionMatrix = cv::Mat::eye(StateSize, StateSize, type);
+  // measurementMatrix is
+  // [1 0 0 0 0 0]
+  // [0 1 0 0 0 0]
+  // [0 0 1 0 0 0]
+  KF->measurementMatrix = cv::Mat::zeros(MeasureSize, StateSize, type);
+  KF->measurementMatrix.at<float>(0) = 1;
+  KF->measurementMatrix.at<float>(7) = 1;
+  KF->measurementMatrix.at<float>(14) = 1;
+  
+  // process noise covariance
+  // the variance of x,y,z is 1e-5, the variance of v_x, v_y, v:z is 5.0
+  // the rest covariance are zero
+  KF->processNoiseCov = cv::Mat::eye(StateSize, StateSize, type)*1e-1;   //cv::setIdentity(KF->processNoiseCov, cv::Scalar(1e-2));
+  KF->processNoiseCov.at<float>(21) = 5.0f;
+  KF->processNoiseCov.at<float>(28) = 5.0f;
+  KF->processNoiseCov.at<float>(35) = 5.0f;
+  
+  // measure noise covariance 
+  KF->measurementNoiseCov = cv::Mat::eye(MeasureSize, MeasureSize, type)*2e-1;  //cv::setIdentity(KF->measurementMatrix, cv::Scalar(1e-1));
 }
 
 
@@ -25,6 +63,7 @@ void boundbox::bounding_box()
       {
 	frame_index.push_back(num_interest++);
 	interest_points->points.push_back(pcl_current_frame -> points[h*frame_width + w]);
+	first_hand_found = 1;
 	continue;
       }
       frame_index.push_back(0);
@@ -59,7 +98,7 @@ void boundbox::largest_cluster()
        Hand_points -> points.push_back(interest_points->points[*pit]);      
        hand_index.push_back(*pit-1);
   }
-  std::cout << std::endl  << Hand_points->size() << "points in hand cluster" << std::endl;
+  std::cout << Hand_points->size() << "points in hand cluster" << std::endl;
   
   frame_mask.clear();
   for (int h = 0; h < frame_height; h++)
@@ -77,7 +116,7 @@ void boundbox::largest_cluster()
       }
     }
   }
-  
+
   }
 }
 
@@ -242,12 +281,58 @@ void boundbox::find_hand_center()
   
   middle_point = Hand_points->points[max_index].getVector3fMap() - hand_size * e;  
   
-  /*
+  // -------------following is the kalman filter----------------------------------------
+  KF->transitionMatrix.at<float>(3) = dt;
+  KF->transitionMatrix.at<float>(10) = dt;
+  KF->transitionMatrix.at<float>(17) = dt;
+  *state = KF->predict();
+  std::cout << "State post:" << state->at<float>(1) << std::endl;
+  
+  std::cout << "Measurement:" << measure->size() << std::endl;
+  measure->at<float>(0) = middle_point(0);             // update the measurement values
+  measure->at<float>(1) = middle_point(1);
+  measure->at<float>(2) = middle_point(2);
+  
+  if (q_index == 1)                   // the first frame to found the hand
+  { 
+     std::cout << "first frame is done" << KF->errorCovPre.size() <<std::endl;
+    KF->errorCovPre.at<float>(0) = 1; // px
+    KF->errorCovPre.at<float>(7) = 1; // px
+    KF->errorCovPre.at<float>(14) = 1;
+    KF->errorCovPre.at<float>(21) = 1;
+    KF->errorCovPre.at<float>(28) = 1; // px
+    KF->errorCovPre.at<float>(35) = 1; // px
+                
+    state->at<float>(0) = middle_point(0);
+    state->at<float>(1) = middle_point(1);
+    state->at<float>(2) = middle_point(2);
+    state->at<float>(3) = 0;
+    state->at<float>(4) = 0;
+    state->at<float>(5) = 0;
+  
+    KF->statePost = *state;
+  }
+  else
+  {
+     cv::Mat estimated = KF->correct(*measure);    
+     std::cout << "Estimated:" << estimated.size() << std::endl;
+     
+     corrected_middle_point(0) = estimated.at<float>(0);
+     corrected_middle_point(1) = estimated.at<float>(1);
+     corrected_middle_point(2) = estimated.at<float>(2);
+  }
+   /*
+  corrected_middle_point(0) = measure->at<float>(0);
+  corrected_middle_point(1) = measure->at<float>(1);
+  corrected_middle_point(2) = measure->at<float>(2);
+  
+ 
   add_hand_sphere(middle_point(0),
                   middle_point(1),
 	          middle_point(2));
-  */	          
+  */       
 }
+
 
 
 bool boundbox::find_in_hand_indices(int element)

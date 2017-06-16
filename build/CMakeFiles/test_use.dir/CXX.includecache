@@ -51,6 +51,14 @@ Eigen/Core
 -
 Eigen/Dense
 -
+opencv2/video/tracking.hpp
+-
+opencv2/core/core.hpp
+-
+opencv2/imgproc/imgproc.hpp
+-
+opencv2/highgui/highgui.hpp
+-
 
 /opt/ros/indigo/include/XmlRpcDecl.h
 ros/macros.h

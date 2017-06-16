@@ -3,7 +3,8 @@
 ros::Publisher pub_test_cloud;
 ros::Publisher pub_saved_cloud;
 ros::Publisher pub_hand_cloud;
-ros::Publisher marker_pub ;
+ros::Publisher marker_pub1 ;
+ros::Publisher marker_pub2 ;
 
 sensor_msgs::PointCloud2ConstPtr current_frame;                 
 sensor_msgs::PointCloud2ConstPtr previous_frame;
@@ -14,10 +15,13 @@ sensor_msgs::PointCloud2 temp3;
 
 std::string frame_id;                                            // frame id in rviz used for display
 int query_index = 0;
+double current_time = 0;
+double past_time = 0;
 
 void add_marker(float x, float y, float z);
 void add_hand_sphere(float x, float y, float z);
-visualization_msgs::Marker marker;
+visualization_msgs::Marker marker1;
+visualization_msgs::Marker marker2;
 
 std::ofstream file("./hand_points.txt");
 
@@ -27,11 +31,12 @@ int main(int argc, char** argv)
   ros::init (argc, argv, "test_use");
   ros::NodeHandle nh;
   rosbag::Bag bag;
-  bag.open("/home/dhri-dz/catkin_ws/save/2017-06-06-15-39-25.bag", rosbag::bagmode::Read);
+  bag.open("/home/dhri-dz/catkin_ws/save/2017-06-15-16-38-21.bag", rosbag::bagmode::Read);
   
   pub_test_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/HandCloud", 1000); 
   pub_saved_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/savedCloud",1000);
-  marker_pub = nh.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+  marker_pub1 = nh.advertise<visualization_msgs::Marker>("corrected_marker", 1);
+  marker_pub2 = nh.advertise<visualization_msgs::Marker>("marker", 1);
  
   boundbox b_box(frame_id);
   
@@ -42,6 +47,7 @@ int main(int argc, char** argv)
   BOOST_FOREACH(rosbag::MessageInstance const m, view)    // loop through view
     {
        current_frame = m.instantiate<sensor_msgs::PointCloud2>();   // return the pointer of the message
+       current_time = m.getTime().toSec();
        if (current_frame != NULL)
        {
 	 b_box.pcl_current_frame.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -57,11 +63,18 @@ int main(int argc, char** argv)
 	 {
 	    b_box.pcl_previous_frame.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
 	    *b_box.pcl_previous_frame = *b_box.pcl_current_frame;
+	    past_time = current_time;
 	    std::cout << query_index++ << std::endl;
 	 }
 	 else
 	 {
+	   std::cout << "current time is" << current_time-past_time << std::endl;
 	   b_box.bounding_box();
+	   b_box.dt = current_time-past_time;                   // the time stamp between two frames used in kalman filter
+	   b_box.q_index = query_index++;
+	   
+	   if (b_box.first_hand_found == 1)
+	   {
 	   b_box.largest_cluster();
 	   
 	   pcl::toROSMsg(*b_box.Hand_points, temp2);          // publish extracted hand
@@ -71,16 +84,24 @@ int main(int argc, char** argv)
 	   std::cout << "start to find edge" << std::endl; 
 	   b_box.find_input_edge();	   
 	   b_box.find_hand_center();
-	   add_hand_sphere(b_box.middle_point(0),
-                           b_box.middle_point(1),
-	                   b_box.middle_point(2));
-	   marker_pub.publish(marker);	   
+	   add_hand_sphere(b_box.corrected_middle_point(0),
+                           b_box.corrected_middle_point(1),
+	                   b_box.corrected_middle_point(2));
+	   marker_pub1.publish(marker1);	   
+	   
+	   add_marker(b_box.middle_point(0),
+                      b_box.middle_point(1),
+	              b_box.middle_point(2));
+	   marker_pub2.publish(marker2);	   
+	   
 	   
 	   if (file.is_open())
                file << b_box.middle_point << '\n';
 	   file.close();
+	   }
 	   
-	   std::cout << query_index++ << std::endl;
+	   past_time = current_time;
+	   std::cout << query_index << std::endl;
 	 }
 	 
        }
@@ -95,57 +116,57 @@ void add_marker(float x, float y, float z)
 
 {
   std::cout << "The marked coor is " << x << ' ' << y << ' ' << z << std::endl;
-  marker.header.frame_id = frame_id;
-  marker.header.stamp = ros::Time::now();                 // time_stamp
-  marker.ns = "my_marker";
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.pose.orientation.x = 0.0;
-  marker.pose.orientation.y = 0.0;
-  marker.pose.orientation.z = 0.0;
-  marker.pose.orientation.w = 0;
+  marker2.header.frame_id = frame_id;
+  marker2.header.stamp = ros::Time::now();                 // time_stamp
+  marker2.ns = "my_marker";
+  marker2.action = visualization_msgs::Marker::ADD;
+  marker2.pose.orientation.x = 0.0;
+  marker2.pose.orientation.y = 0.0;
+  marker2.pose.orientation.z = 0.0;
+  marker2.pose.orientation.w = 0;
   
-  marker.type = visualization_msgs::Marker::CUBE;
-  marker.scale.x = 0.02;
-  marker.scale.y = 0.02;
-  marker.scale.z = 0.02;
-  marker.color.r = 1.0f;             // set color to red
-  marker.color.g = 0.0f;
-  marker.color.b = 0.0f;
-  marker.color.a = 1.0;
+  marker2.type = visualization_msgs::Marker::SPHERE;
+  marker2.scale.x = 0.2;
+  marker2.scale.y = 0.2;
+  marker2.scale.z = 0.2;
+  marker2.color.r = 1.0f;             // set color to red
+  marker2.color.g = 0.0f;
+  marker2.color.b = 0.0f;
+  marker2.color.a = 0.2;
   
-  marker.pose.position.x = x;
-  marker.pose.position.y = y;
-  marker.pose.position.z = z;
+  marker2.pose.position.x = x;
+  marker2.pose.position.y = y;
+  marker2.pose.position.z = z;
   
-  marker.lifetime = ros::Duration();
+  marker2.lifetime = ros::Duration();
 }
 
 void add_hand_sphere(float x, float y, float z)
 {
   std::cout << "The marked coor is " << x << ' ' << y << ' ' << z << std::endl;
-  marker.header.frame_id = frame_id;
-  marker.header.stamp = ros::Time::now();                 // time_stamp
-  marker.ns = "my_sphere";
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.pose.orientation.x = 0.0;
-  marker.pose.orientation.y = 0.0;
-  marker.pose.orientation.z = 0.0;
-  marker.pose.orientation.w = 0;
+  marker1.header.frame_id = frame_id;
+  marker1.header.stamp = ros::Time::now();                 // time_stamp
+  marker1.ns = "my_sphere";
+  marker1.action = visualization_msgs::Marker::ADD;
+  marker1.pose.orientation.x = 0.0;
+  marker1.pose.orientation.y = 0.0;
+  marker1.pose.orientation.z = 0.0;
+  marker1.pose.orientation.w = 0;
   
-  marker.type = visualization_msgs::Marker::SPHERE;
-  marker.scale.x = 0.2;
-  marker.scale.y = 0.2;
-  marker.scale.z = 0.2;
-  marker.color.r = 0.0f;             // set color to red
-  marker.color.g = 0.0f;
-  marker.color.b = 1.0f;
-  marker.color.a = 0.2;
+  marker1.type = visualization_msgs::Marker::SPHERE;
+  marker1.scale.x = 0.2;
+  marker1.scale.y = 0.2;
+  marker1.scale.z = 0.2;
+  marker1.color.r = 0.0f;             // set color to red
+  marker1.color.g = 0.0f;
+  marker1.color.b = 1.0f;
+  marker1.color.a = 0.2;
   
-  marker.pose.position.x = x;
-  marker.pose.position.y = y;
-  marker.pose.position.z = z;
+  marker1.pose.position.x = x;
+  marker1.pose.position.y = y;
+  marker1.pose.position.z = z;
   
-  marker.lifetime = ros::Duration();
+  marker1.lifetime = ros::Duration();
 
 }
 
