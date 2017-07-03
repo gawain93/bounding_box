@@ -8,6 +8,7 @@
 /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/bond_generate_messages_lisp.dir
 /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/bond_generate_messages_py.dir
 /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/clean_test_results.dir
+/home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/csgpulib.dir
 /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/download_extra_data.dir
 /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/doxygen.dir
 /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/dynamic_reconfigure_gencfg.dir

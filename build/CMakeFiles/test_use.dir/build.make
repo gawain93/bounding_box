@@ -95,16 +95,66 @@ CMakeFiles/test_use.dir/src/boundbox.cpp.o.provides: CMakeFiles/test_use.dir/src
 
 CMakeFiles/test_use.dir/src/boundbox.cpp.o.provides.build: CMakeFiles/test_use.dir/src/boundbox.cpp.o
 
+CMakeFiles/test_use.dir/src/trackingbox.cpp.o: CMakeFiles/test_use.dir/flags.make
+CMakeFiles/test_use.dir/src/trackingbox.cpp.o: ../src/trackingbox.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles $(CMAKE_PROGRESS_3)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test_use.dir/src/trackingbox.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test_use.dir/src/trackingbox.cpp.o -c /home/dhri-dz/catkin_ws/src/test_use/src/trackingbox.cpp
+
+CMakeFiles/test_use.dir/src/trackingbox.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_use.dir/src/trackingbox.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/dhri-dz/catkin_ws/src/test_use/src/trackingbox.cpp > CMakeFiles/test_use.dir/src/trackingbox.cpp.i
+
+CMakeFiles/test_use.dir/src/trackingbox.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_use.dir/src/trackingbox.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/dhri-dz/catkin_ws/src/test_use/src/trackingbox.cpp -o CMakeFiles/test_use.dir/src/trackingbox.cpp.s
+
+CMakeFiles/test_use.dir/src/trackingbox.cpp.o.requires:
+.PHONY : CMakeFiles/test_use.dir/src/trackingbox.cpp.o.requires
+
+CMakeFiles/test_use.dir/src/trackingbox.cpp.o.provides: CMakeFiles/test_use.dir/src/trackingbox.cpp.o.requires
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/trackingbox.cpp.o.provides.build
+.PHONY : CMakeFiles/test_use.dir/src/trackingbox.cpp.o.provides
+
+CMakeFiles/test_use.dir/src/trackingbox.cpp.o.provides.build: CMakeFiles/test_use.dir/src/trackingbox.cpp.o
+
+CMakeFiles/test_use.dir/src/csfeature.cpp.o: CMakeFiles/test_use.dir/flags.make
+CMakeFiles/test_use.dir/src/csfeature.cpp.o: ../src/csfeature.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles $(CMAKE_PROGRESS_4)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test_use.dir/src/csfeature.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test_use.dir/src/csfeature.cpp.o -c /home/dhri-dz/catkin_ws/src/test_use/src/csfeature.cpp
+
+CMakeFiles/test_use.dir/src/csfeature.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_use.dir/src/csfeature.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/dhri-dz/catkin_ws/src/test_use/src/csfeature.cpp > CMakeFiles/test_use.dir/src/csfeature.cpp.i
+
+CMakeFiles/test_use.dir/src/csfeature.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_use.dir/src/csfeature.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/dhri-dz/catkin_ws/src/test_use/src/csfeature.cpp -o CMakeFiles/test_use.dir/src/csfeature.cpp.s
+
+CMakeFiles/test_use.dir/src/csfeature.cpp.o.requires:
+.PHONY : CMakeFiles/test_use.dir/src/csfeature.cpp.o.requires
+
+CMakeFiles/test_use.dir/src/csfeature.cpp.o.provides: CMakeFiles/test_use.dir/src/csfeature.cpp.o.requires
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/csfeature.cpp.o.provides.build
+.PHONY : CMakeFiles/test_use.dir/src/csfeature.cpp.o.provides
+
+CMakeFiles/test_use.dir/src/csfeature.cpp.o.provides.build: CMakeFiles/test_use.dir/src/csfeature.cpp.o
+
 # Object files for target test_use
 test_use_OBJECTS = \
 "CMakeFiles/test_use.dir/src/main.cpp.o" \
-"CMakeFiles/test_use.dir/src/boundbox.cpp.o"
+"CMakeFiles/test_use.dir/src/boundbox.cpp.o" \
+"CMakeFiles/test_use.dir/src/trackingbox.cpp.o" \
+"CMakeFiles/test_use.dir/src/csfeature.cpp.o"
 
 # External object files for target test_use
 test_use_EXTERNAL_OBJECTS =
 
 devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/main.cpp.o
 devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/boundbox.cpp.o
+devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/trackingbox.cpp.o
+devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/csfeature.cpp.o
 devel/lib/test_use/test_use: CMakeFiles/test_use.dir/build.make
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libopencv_videostab.so.2.4.8
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libopencv_video.so.2.4.8
@@ -181,12 +231,12 @@ devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libboost_signals.so
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
 devel/lib/test_use/test_use: /opt/ros/indigo/lib/libxmlrpcpp.so
 devel/lib/test_use/test_use: /opt/ros/indigo/lib/libtf2.so
+devel/lib/test_use/test_use: /opt/ros/indigo/lib/libroscpp_serialization.so
 devel/lib/test_use/test_use: /opt/ros/indigo/lib/librosconsole.so
 devel/lib/test_use/test_use: /opt/ros/indigo/lib/librosconsole_log4cxx.so
 devel/lib/test_use/test_use: /opt/ros/indigo/lib/librosconsole_backend_interface.so
 devel/lib/test_use/test_use: /usr/lib/liblog4cxx.so
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libboost_regex.so
-devel/lib/test_use/test_use: /opt/ros/indigo/lib/libroscpp_serialization.so
 devel/lib/test_use/test_use: /opt/ros/indigo/lib/librostime.so
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
 devel/lib/test_use/test_use: /opt/ros/indigo/lib/libcpp_common.so
@@ -194,6 +244,8 @@ devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libboost_system.so
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libboost_thread.so
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libpthread.so
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so
+devel/lib/test_use/test_use: devel/lib/libcsgpulib.so
+devel/lib/test_use/test_use: /usr/local/cuda/lib64/libcudart.so
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libopencv_photo.so.2.4.8
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libopencv_legacy.so.2.4.8
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libopencv_video.so.2.4.8
@@ -215,6 +267,8 @@ CMakeFiles/test_use.dir/build: devel/lib/test_use/test_use
 
 CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/main.cpp.o.requires
 CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/boundbox.cpp.o.requires
+CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/trackingbox.cpp.o.requires
+CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/csfeature.cpp.o.requires
 .PHONY : CMakeFiles/test_use.dir/requires
 
 CMakeFiles/test_use.dir/clean:

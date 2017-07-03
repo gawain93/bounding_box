@@ -280,6 +280,19 @@ clean_test_results/fast:
 .PHONY : clean_test_results/fast
 
 #=============================================================================
+# Target rules for targets named csgpulib
+
+# Build rule for target.
+csgpulib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 csgpulib
+.PHONY : csgpulib
+
+# fast build rule for target.
+csgpulib/fast:
+	$(MAKE) -f CMakeFiles/csgpulib.dir/build.make CMakeFiles/csgpulib.dir/build
+.PHONY : csgpulib/fast
+
+#=============================================================================
 # Target rules for targets named download_extra_data
 
 # Build rule for target.
@@ -888,6 +901,30 @@ src/boundbox.cpp.s:
 	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/boundbox.cpp.s
 .PHONY : src/boundbox.cpp.s
 
+src/csfeature.o: src/csfeature.cpp.o
+.PHONY : src/csfeature.o
+
+# target to build an object file
+src/csfeature.cpp.o:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/csfeature.cpp.o
+.PHONY : src/csfeature.cpp.o
+
+src/csfeature.i: src/csfeature.cpp.i
+.PHONY : src/csfeature.i
+
+# target to preprocess a source file
+src/csfeature.cpp.i:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/csfeature.cpp.i
+.PHONY : src/csfeature.cpp.i
+
+src/csfeature.s: src/csfeature.cpp.s
+.PHONY : src/csfeature.s
+
+# target to generate assembly for a file
+src/csfeature.cpp.s:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/csfeature.cpp.s
+.PHONY : src/csfeature.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -912,6 +949,30 @@ src/main.cpp.s:
 	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/trackingbox.o: src/trackingbox.cpp.o
+.PHONY : src/trackingbox.o
+
+# target to build an object file
+src/trackingbox.cpp.o:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/trackingbox.cpp.o
+.PHONY : src/trackingbox.cpp.o
+
+src/trackingbox.i: src/trackingbox.cpp.i
+.PHONY : src/trackingbox.i
+
+# target to preprocess a source file
+src/trackingbox.cpp.i:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/trackingbox.cpp.i
+.PHONY : src/trackingbox.cpp.i
+
+src/trackingbox.s: src/trackingbox.cpp.s
+.PHONY : src/trackingbox.s
+
+# target to generate assembly for a file
+src/trackingbox.cpp.s:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/trackingbox.cpp.s
+.PHONY : src/trackingbox.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -928,6 +989,7 @@ help:
 	@echo "... bond_generate_messages_lisp"
 	@echo "... bond_generate_messages_py"
 	@echo "... clean_test_results"
+	@echo "... csgpulib"
 	@echo "... download_extra_data"
 	@echo "... doxygen"
 	@echo "... dynamic_reconfigure_gencfg"
@@ -983,9 +1045,15 @@ help:
 	@echo "... src/boundbox.o"
 	@echo "... src/boundbox.i"
 	@echo "... src/boundbox.s"
+	@echo "... src/csfeature.o"
+	@echo "... src/csfeature.i"
+	@echo "... src/csfeature.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/trackingbox.o"
+	@echo "... src/trackingbox.i"
+	@echo "... src/trackingbox.s"
 .PHONY : help
 
 

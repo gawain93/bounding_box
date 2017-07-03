@@ -79,7 +79,7 @@ void boundbox::largest_cluster()
   tree -> setInputCloud(interest_points);       
   std::vector<pcl::PointIndices> cluster_indices;
   pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
-  ec.setClusterTolerance(0.01);
+  ec.setClusterTolerance(0.03);
   ec.setMinClusterSize(50);
   ec.setMaxClusterSize(30000);
   ec.setSearchMethod(tree);
@@ -338,5 +338,34 @@ void boundbox::find_hand_center()
 bool boundbox::find_in_hand_indices(int element)
 {
   return (std::find(hand_index.begin(),hand_index.end(),element) != hand_index.end());
+}
+
+
+void boundbox::add_bounding_box()
+{
+  ROI.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
+  std::cout << middle_point(0) << " " << middle_point(1)  << "" <<middle_point(2) << std::endl; 
+  double xCor = round(fx / middle_point(2) * middle_point(0) + cx);      // transform to the camera coordinate
+  double yCor = round(fy / middle_point(2) * middle_point(1) + cy);
+  double box_size_img =  box_size * fx / middle_point(2);      
+  //std::cout << xCor << " " << yCor << std::endl; 
+  std::cout << box_size_img << std::endl;
+  
+  
+  for (int i = 0; i < Hand_points->size(); i++)
+  {
+    //std::cout << "start to find the point" << std::endl;
+    
+    double x = round(fx / Hand_points->points[i].z * Hand_points -> points[i].x + cx);
+    double y = round(fy / Hand_points -> points[i].z * Hand_points -> points[i].y + cy);
+    //std::cout << x << " " << y << std::endl; 
+    
+    double distance = sqrt(pow((xCor-x),2) + pow((yCor - y),2));
+    if (distance <= box_size_img)
+    {
+      //std::cout << "distance is" <<  sqrt(pow((xCor-x),2) + pow((yCor - y),2)) << std::endl;
+      ROI->points.push_back(Hand_points -> points[i]);
+    }
+  }
 }
 

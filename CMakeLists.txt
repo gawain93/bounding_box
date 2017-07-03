@@ -3,6 +3,7 @@ project(test_use)
 
 find_package(OpenCV REQUIRED)
 find_package(PCL 1.7 REQUIRED)
+find_package(CUDA QUIET REQUIRED)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
 # add_definitions(-std=c++11)
@@ -19,6 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   visualization_msgs
   interactive_markers
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -135,10 +137,15 @@ include_directories(
 set( sources
      src/main.cpp
      src/boundbox.cpp
+     src/trackingbox.cpp
+     src/csfeature.cpp
 )
 
 set( headers
      src/boundbox.h
+     src/trackingbox.h
+     src/csfeature.h
+     src/common.h
 )
 
 ## Add cmake target dependencies of the library
@@ -154,12 +161,19 @@ if (NOT PCL_FOUND)
     MESSAGE(FATAL_ERROR "PCL not found.\n")
 endif (NOT PCL_FOUND)
 
+INCLUDE(FindCUDA)
+CUDA_ADD_LIBRARY (csgpulib SHARED 
+                           src/csgpu.cu 
+                           src/csgpu.h)# src/reg.cu src/reg.h)
+
+#CUDA_ADD_EXECUTABLE(cuda_track src/csgpu.cu src/csgpu.h)# src/reg.cu)
+
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME} ${sources} ${headers})
 
-target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
+target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS})
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -172,8 +186,10 @@ target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
-   ${catkin_LIBRARIES}
+   ${catkin_LIBRARIES} csgpulib ${CUDA_LIBRARIES}
 )
+
+
 
 #############
 ## Install ##

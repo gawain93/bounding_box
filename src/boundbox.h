@@ -40,6 +40,7 @@ public:
   void find_input_edge();
   void find_hand_center();
   bool find_in_hand_indices(int element);
+  void add_bounding_box();
   
   int hand_coordinate_middle_h;                                    // frame index of the middle of the hand
   int hand_coordinate_middle_w;
@@ -55,6 +56,7 @@ public:
   std::vector<size_t> frame_index;                                 // to store the index of the frame 480*640
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr interest_points;           // used to show the detected interest points
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr Hand_points;
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr ROI;
   
   Eigen::Vector3f middle_point;
   Eigen::Vector3f corrected_middle_point;
@@ -80,6 +82,7 @@ public:
 private:
   std::string frame_id;
   float hand_size = 0.1;                              // distance from the center of hand to the upper part of hand
+  float box_size = 0.2; 
   
   std::vector<size_t> hand_index;                                  // to store the index of the point that is hand 
   std::vector <size_t> frame_mask;                                 // look up table of if the pixel is hand or not, 1 and 0

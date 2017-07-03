@@ -5,7 +5,9 @@ SET(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
   "/home/dhri-dz/catkin_ws/src/test_use/src/boundbox.cpp" "/home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/test_use.dir/src/boundbox.cpp.o"
+  "/home/dhri-dz/catkin_ws/src/test_use/src/csfeature.cpp" "/home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/test_use.dir/src/csfeature.cpp.o"
   "/home/dhri-dz/catkin_ws/src/test_use/src/main.cpp" "/home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/test_use.dir/src/main.cpp.o"
+  "/home/dhri-dz/catkin_ws/src/test_use/src/trackingbox.cpp" "/home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/test_use.dir/src/trackingbox.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -23,6 +25,7 @@ SET(CMAKE_TARGET_DEFINITIONS
 
 # Targets to which this target links.
 SET(CMAKE_TARGET_LINKED_INFO_FILES
+  "/home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles/csgpulib.dir/DependInfo.cmake"
   )
 
 # The include file search paths:
@@ -34,6 +37,7 @@ SET(CMAKE_C_TARGET_INCLUDE_PATH
   "/usr/include/pcl-1.7"
   "/usr/include/opencv"
   "/opt/ros/indigo/include"
+  "/usr/local/cuda/include"
   )
 SET(CMAKE_CXX_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})
 SET(CMAKE_Fortran_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})

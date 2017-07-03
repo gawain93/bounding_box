@@ -1,0 +1,1 @@
+/usr/bin/c++     -Wno-deprecated     CMakeFiles/cuda_track.dir/src/./cuda_track_generated_csgpu.cu.o  -o devel/lib/test_use/cuda_track -rdynamic /usr/local/cuda/lib64/libcudart.so -Wl,-rpath,/usr/local/cuda/lib64 

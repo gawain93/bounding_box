@@ -1,13 +1,25 @@
+#include <interactive_markers/interactive_marker_server.h>
+#include <interactive_markers/menu_handler.h>
+
+#include <tf/transform_broadcaster.h>
+#include <tf/tf.h>
+#include <math.h>
+
 #include "boundbox.h"
+#include "trackingbox.h"
 
 ros::Publisher pub_test_cloud;
 ros::Publisher pub_saved_cloud;
 ros::Publisher pub_hand_cloud;
+ros::Publisher pub_ROI_cloud ;
+ros::Publisher pub_mtrack;
 ros::Publisher marker_pub1 ;
 ros::Publisher marker_pub2 ;
 
 sensor_msgs::PointCloud2ConstPtr current_frame;                 
 sensor_msgs::PointCloud2ConstPtr previous_frame;
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr particle_scene;
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr transformed_model;
 
 sensor_msgs::PointCloud2 temp1;                                  // comntain the point cloud which need to be visualized
 sensor_msgs::PointCloud2 temp2;
@@ -17,6 +29,7 @@ std::string frame_id;                                            // frame id in 
 int query_index = 0;
 double current_time = 0;
 double past_time = 0;
+bool manual_mode = 1;
 
 void add_marker(float x, float y, float z);
 void add_hand_sphere(float x, float y, float z);
@@ -25,23 +38,35 @@ visualization_msgs::Marker marker2;
 
 std::ofstream file("./hand_points.txt");
 
+boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
+interactive_markers::MenuHandler menu_handler;
+
+using namespace visualization_msgs;
+
 int main(int argc, char** argv)
 {
          
   ros::init (argc, argv, "test_use");
   ros::NodeHandle nh;
   rosbag::Bag bag;
-  bag.open("/home/dhri-dz/catkin_ws/save/2017-06-15-16-38-21.bag", rosbag::bagmode::Read);
+  bag.open("/home/dhri-dz/catkin_ws/save/2017-06-26-21-26-31.bag", rosbag::bagmode::Read);
   
   pub_test_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/HandCloud", 1000); 
-  pub_saved_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/savedCloud",1000);
+  pub_saved_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/savedCloud", 1000);
+  pub_ROI_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/ROICloud", 1000);
+  pub_mtrack = nh.advertise<sensor_msgs::PointCloud2>("dhri/TransformedModel", 1000); 
   marker_pub1 = nh.advertise<visualization_msgs::Marker>("corrected_marker", 1);
   marker_pub2 = nh.advertise<visualization_msgs::Marker>("marker", 1);
- 
+    	   
   boundbox b_box(frame_id);
+  trackingbox tracker;
+      std::cout << "ros init" << std::endl;
   
   sensor_msgs::PointCloud2::ConstPtr reference = ros::topic::waitForMessage<sensor_msgs::PointCloud2>("/camera/depth_registered/points");
   frame_id = (reference -> header.frame_id); 
+  
+  tracker.setModel();
+  transformed_model = tracker.getTransformedModel();
   
   rosbag::View view(bag, rosbag::TopicQuery("/camera/depth_registered/points"));
   BOOST_FOREACH(rosbag::MessageInstance const m, view)    // loop through view
@@ -52,6 +77,16 @@ int main(int argc, char** argv)
        {
 	 b_box.pcl_current_frame.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
 	 pcl::fromROSMsg(*current_frame,*b_box.pcl_current_frame);
+	 std::cout << "data loaded!" << std::endl;
+	 particle_scene.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
+	 pcl::fromROSMsg(*current_frame, *particle_scene);
+	 tracker.run(particle_scene);
+	 
+	 sensor_msgs::PointCloud2 tran_model;
+	 transformed_model = tracker.getTransformedModel();
+	 pcl::toROSMsg(*transformed_model, tran_model);
+	 tran_model.header.frame_id = frame_id;
+	 pub_mtrack.publish(tran_model);
 	 b_box.frame_index.clear();
 	 
 	 // publish saved frame here
@@ -64,10 +99,10 @@ int main(int argc, char** argv)
 	    b_box.pcl_previous_frame.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
 	    *b_box.pcl_previous_frame = *b_box.pcl_current_frame;
 	    past_time = current_time;
-	    std::cout << query_index++ << std::endl;
+	    std::cout << "The current frame is " << query_index++ << std::endl;
 	 }
 	 else
-	 {
+	 {	   
 	   std::cout << "current time is" << current_time-past_time << std::endl;
 	   b_box.bounding_box();
 	   b_box.dt = current_time-past_time;                   // the time stamp between two frames used in kalman filter
@@ -84,6 +119,13 @@ int main(int argc, char** argv)
 	   std::cout << "start to find edge" << std::endl; 
 	   b_box.find_input_edge();	   
 	   b_box.find_hand_center();
+	   b_box.add_bounding_box();
+	   
+	   pcl::toROSMsg(*b_box.ROI, temp3);          // publish extracted hand
+           temp3.header.frame_id = frame_id.c_str();
+           pub_ROI_cloud.publish(temp3);
+	   
+	   std::cout << "The size of ROI is:" << b_box.ROI -> size() << std::endl;
 	   add_hand_sphere(b_box.corrected_middle_point(0),
                            b_box.corrected_middle_point(1),
 	                   b_box.corrected_middle_point(2));
@@ -92,8 +134,9 @@ int main(int argc, char** argv)
 	   add_marker(b_box.middle_point(0),
                       b_box.middle_point(1),
 	              b_box.middle_point(2));
-	   marker_pub2.publish(marker2);	   
+	   marker_pub2.publish(marker2);	 
 	   
+	   // here to add the code to add the rode for bounding_box
 	   
 	   if (file.is_open())
                file << b_box.middle_point << '\n';
@@ -101,19 +144,20 @@ int main(int argc, char** argv)
 	   }
 	   
 	   past_time = current_time;
-	   std::cout << query_index << std::endl;
-	 }
-	 
+	   std::cout << "The current frame is " << query_index << std::endl;
+	   	   
+	 }	
        }
+       //ros::spin();
+       //server.reset();
      }
-    
+
     bag.close();
-     
+    
 return (0);
 }  
 
 void add_marker(float x, float y, float z)
-
 {
   std::cout << "The marked coor is " << x << ' ' << y << ' ' << z << std::endl;
   marker2.header.frame_id = frame_id;
@@ -169,4 +213,8 @@ void add_hand_sphere(float x, float y, float z)
   marker1.lifetime = ros::Duration();
 
 }
+
+
+
+
 

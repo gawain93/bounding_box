@@ -1,0 +1,11 @@
+/pub/points/mtrack: '/dhri/points/trackID'
+/param/samplingRatio: 7
+/param/buffernum: 1
+/gpu/usegpu: true
+/userefinement:  false
+
+/gpu/particlenumber: 7000
+/gpu/gridsize: 0.007
+
+/gpu/motionratio: 0.6
+/buffernumber: 1
