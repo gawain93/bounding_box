@@ -7,6 +7,7 @@
 
 #include "boundbox.h"
 #include "trackingbox.h"
+#include "kdsearch.h"
 
 ros::Publisher pub_test_cloud;
 ros::Publisher pub_saved_cloud;
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
   ros::init (argc, argv, "test_use");
   ros::NodeHandle nh;
   rosbag::Bag bag;
-  bag.open("/home/dhri-dz/catkin_ws/save/2017-06-26-21-26-31.bag", rosbag::bagmode::Read);
+  bag.open("/home/dhri-dz/catkin_ws/save/2017-06-26-21-26-31.bag", rosbag::bagmode::Read);  //
   
   pub_test_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/HandCloud", 1000); 
   pub_saved_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/savedCloud", 1000);
@@ -60,14 +61,15 @@ int main(int argc, char** argv)
     	   
   boundbox b_box(frame_id);
   trackingbox tracker;
-      std::cout << "ros init" << std::endl;
   
   sensor_msgs::PointCloud2::ConstPtr reference = ros::topic::waitForMessage<sensor_msgs::PointCloud2>("/camera/depth_registered/points");
   frame_id = (reference -> header.frame_id); 
-  
+
   tracker.setModel();
+
   transformed_model = tracker.getTransformedModel();
-  
+        
+
   rosbag::View view(bag, rosbag::TopicQuery("/camera/depth_registered/points"));
   BOOST_FOREACH(rosbag::MessageInstance const m, view)    // loop through view
     {
@@ -146,7 +148,8 @@ int main(int argc, char** argv)
 	   past_time = current_time;
 	   std::cout << "The current frame is " << query_index << std::endl;
 	   	   
-	 }	
+	 }
+	 kdsearch kd_search(b_box.ROI, transformed_model);
        }
        //ros::spin();
        //server.reset();

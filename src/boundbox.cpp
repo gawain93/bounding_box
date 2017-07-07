@@ -41,6 +41,8 @@ boundbox::boundbox(std::string fid)
   
   // measure noise covariance 
   KF->measurementNoiseCov = cv::Mat::eye(MeasureSize, MeasureSize, type)*2e-1;  //cv::setIdentity(KF->measurementMatrix, cv::Scalar(1e-1));
+  
+  ROI.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
 }
 
 

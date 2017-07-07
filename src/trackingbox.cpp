@@ -82,6 +82,7 @@ void trackingbox::initSamples(ParticleXYZRPY initpose)
     {
         temp=sampleWithVar(initpose, 0.01f, 1.8f,temp2,false); // dist in m, ang in degrees, for variance of translation and rotation
         m_particles.push_back(temp);
+
     }
 }
 
@@ -146,6 +147,7 @@ PointCloud< PointXYZRGB >::Ptr trackingbox::getParticleCloud()
 void trackingbox::run(PointCloud< PointXYZRGB >::Ptr scene)
 {
    m_cnt ++;
+   cout<<"current rame index is "<<m_cnt<<endl;
    float thresvel = M_PI;
    while(m_finalParticle.roll > thresvel) m_finalParticle.roll -= 2.f*M_PI;
    while(m_finalParticle.roll < -thresvel) m_finalParticle.roll += 2.f*M_PI;
@@ -211,12 +213,12 @@ void trackingbox::run(PointCloud< PointXYZRGB >::Ptr scene)
 
   int xCor = (int)round(570.f/predict.z * predict.x + 319.5);      // transform to the camera coordinate
   int yCor = (int)round(570.f/predict.z * predict.y + 239.5);
-
+  cout << "error flag1" << endl;
   int xB,yB,xE,yE;
   int modelPixelSize = m_modelsize * 570.f/predict.z;              // m_modelsize: norm of the points of model
   xB = max(xCor-modelPixelSize, 0); xE = min(639, xCor+modelPixelSize);        //???????????????????
   yB = max(yCor-modelPixelSize, 0); yE = min(479, yCor+modelPixelSize);
-
+  cout << "error flag2" << endl;
   int ct=0;
   for(size_t i=0; i<modelPixelSize*modelPixelSize; i++)
   {
@@ -230,15 +232,16 @@ void trackingbox::run(PointCloud< PointXYZRGB >::Ptr scene)
        ct++;
     }
   }
-  
+  cout<<"sampled "<<m_scene->points.size()<<"observation points"<<endl;
+  cout << "error flag3" << endl;
   vector<int> indices;
   pcl::removeNaNFromPointCloud(*m_scene, *m_scene, indices);
-
+  cout << "error flag4" << endl;
  //do the actual particle filtering
  float vardist=0.012f, varang=2.405f;
  resample(vardist, varang,true);
+ cout << "error flag5" << endl;
  weight();
- 
  
 }
 
@@ -248,11 +251,13 @@ void trackingbox::resample(float varDist, float varAng, bool firstRun)
     double probabilities[m_particlenum];
     for (size_t i=0; i<m_particlenum; i++)
     {
-        probabilities[i] = m_particles[i].weight;
+        probabilities[i] = m_particles[i].weight; 
+	std::cout << probabilities[i] <<"  ";
     }
     std::vector<double> cumulative;
     std::partial_sum(&probabilities[0], &probabilities[0] + m_particlenum,
                      std::back_inserter(cumulative));
+        cout << "error flag6" << cumulative.back() << endl;
     boost::uniform_real<> dist(0, cumulative.back());
     boost::variate_generator<boost::mt19937&, boost::uniform_real<> > die(m_gen, dist);
     std::lower_bound(cumulative.begin(), cumulative.end(), die()) - cumulative.begin();

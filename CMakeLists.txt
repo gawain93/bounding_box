@@ -139,6 +139,7 @@ set( sources
      src/boundbox.cpp
      src/trackingbox.cpp
      src/csfeature.cpp
+     src/kdsearch.cpp
 )
 
 set( headers
@@ -146,6 +147,7 @@ set( headers
      src/trackingbox.h
      src/csfeature.h
      src/common.h
+     src/kdsearch.h
 )
 
 ## Add cmake target dependencies of the library

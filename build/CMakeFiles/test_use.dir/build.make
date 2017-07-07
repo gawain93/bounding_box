@@ -141,12 +141,36 @@ CMakeFiles/test_use.dir/src/csfeature.cpp.o.provides: CMakeFiles/test_use.dir/sr
 
 CMakeFiles/test_use.dir/src/csfeature.cpp.o.provides.build: CMakeFiles/test_use.dir/src/csfeature.cpp.o
 
+CMakeFiles/test_use.dir/src/kdsearch.cpp.o: CMakeFiles/test_use.dir/flags.make
+CMakeFiles/test_use.dir/src/kdsearch.cpp.o: ../src/kdsearch.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/dhri-dz/catkin_ws/src/test_use/build/CMakeFiles $(CMAKE_PROGRESS_5)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test_use.dir/src/kdsearch.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test_use.dir/src/kdsearch.cpp.o -c /home/dhri-dz/catkin_ws/src/test_use/src/kdsearch.cpp
+
+CMakeFiles/test_use.dir/src/kdsearch.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_use.dir/src/kdsearch.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/dhri-dz/catkin_ws/src/test_use/src/kdsearch.cpp > CMakeFiles/test_use.dir/src/kdsearch.cpp.i
+
+CMakeFiles/test_use.dir/src/kdsearch.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_use.dir/src/kdsearch.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/dhri-dz/catkin_ws/src/test_use/src/kdsearch.cpp -o CMakeFiles/test_use.dir/src/kdsearch.cpp.s
+
+CMakeFiles/test_use.dir/src/kdsearch.cpp.o.requires:
+.PHONY : CMakeFiles/test_use.dir/src/kdsearch.cpp.o.requires
+
+CMakeFiles/test_use.dir/src/kdsearch.cpp.o.provides: CMakeFiles/test_use.dir/src/kdsearch.cpp.o.requires
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/kdsearch.cpp.o.provides.build
+.PHONY : CMakeFiles/test_use.dir/src/kdsearch.cpp.o.provides
+
+CMakeFiles/test_use.dir/src/kdsearch.cpp.o.provides.build: CMakeFiles/test_use.dir/src/kdsearch.cpp.o
+
 # Object files for target test_use
 test_use_OBJECTS = \
 "CMakeFiles/test_use.dir/src/main.cpp.o" \
 "CMakeFiles/test_use.dir/src/boundbox.cpp.o" \
 "CMakeFiles/test_use.dir/src/trackingbox.cpp.o" \
-"CMakeFiles/test_use.dir/src/csfeature.cpp.o"
+"CMakeFiles/test_use.dir/src/csfeature.cpp.o" \
+"CMakeFiles/test_use.dir/src/kdsearch.cpp.o"
 
 # External object files for target test_use
 test_use_EXTERNAL_OBJECTS =
@@ -155,6 +179,7 @@ devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/main.cpp.o
 devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/boundbox.cpp.o
 devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/trackingbox.cpp.o
 devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/csfeature.cpp.o
+devel/lib/test_use/test_use: CMakeFiles/test_use.dir/src/kdsearch.cpp.o
 devel/lib/test_use/test_use: CMakeFiles/test_use.dir/build.make
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libopencv_videostab.so.2.4.8
 devel/lib/test_use/test_use: /usr/lib/x86_64-linux-gnu/libopencv_video.so.2.4.8
@@ -269,6 +294,7 @@ CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/main.cpp.o.require
 CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/boundbox.cpp.o.requires
 CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/trackingbox.cpp.o.requires
 CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/csfeature.cpp.o.requires
+CMakeFiles/test_use.dir/requires: CMakeFiles/test_use.dir/src/kdsearch.cpp.o.requires
 .PHONY : CMakeFiles/test_use.dir/requires
 
 CMakeFiles/test_use.dir/clean:
