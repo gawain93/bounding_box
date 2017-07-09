@@ -117,6 +117,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr trackingbox::getTransformedModel()
 
 
     Eigen::Affine3f finaltrans = m_finalParticle.toEigenMatrix();
+    model_tran_matrix = finaltrans;
     std::cout<<"current object 6DOF pose is : " <<m_finalParticle<<endl;
     m_transformedModel.reset(new Cloud);
     transformPointCloud(*model, *m_transformedModel, finaltrans);

@@ -150,7 +150,7 @@ int main(int argc, char** argv)
 	   past_time = current_time;
 	   std::cout << "The current frame is " << query_index << std::endl;
 	   
-           kdsearch kd_search(b_box.ROI, transformed_model);
+           kdsearch kd_search(b_box.ROI, transformed_model, tracker.model_tran_matrix);
 	   kd_search.search();
 	   sensor_msgs::PointCloud2 raw_hand;
            pcl::toROSMsg(*kd_search.raw_hand, raw_hand);

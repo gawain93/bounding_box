@@ -53,6 +53,8 @@ public:
     CsFeature  m_modelF;
     CsFeatureEstimation csest;
     
+    Eigen::Affine3f model_tran_matrix;
+    
 private:
    boost::mt19937 m_gen;                         // for random number
    std::string modelfile = "/home/dhri-dz/rosbuild_ws/realtrack/realtrack/kamille.pcd";
