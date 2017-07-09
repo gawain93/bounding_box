@@ -13,6 +13,7 @@ ros::Publisher pub_test_cloud;
 ros::Publisher pub_saved_cloud;
 ros::Publisher pub_hand_cloud;
 ros::Publisher pub_ROI_cloud ;
+ros::Publisher pub_raw_hand;
 ros::Publisher pub_mtrack;
 ros::Publisher marker_pub1 ;
 ros::Publisher marker_pub2 ;
@@ -50,12 +51,13 @@ int main(int argc, char** argv)
   ros::init (argc, argv, "test_use");
   ros::NodeHandle nh;
   rosbag::Bag bag;
-  bag.open("/home/dhri-dz/catkin_ws/save/2017-06-26-21-26-31.bag", rosbag::bagmode::Read);  //
+  bag.open("/home/dhri-dz/catkin_ws/save/2017-07-07-18-42-36.bag", rosbag::bagmode::Read);  //
   
   pub_test_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/HandCloud", 1000); 
   pub_saved_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/savedCloud", 1000);
   pub_ROI_cloud = nh.advertise<sensor_msgs::PointCloud2>("/dhri/ROICloud", 1000);
   pub_mtrack = nh.advertise<sensor_msgs::PointCloud2>("dhri/TransformedModel", 1000); 
+  pub_raw_hand = nh.advertise<sensor_msgs::PointCloud2>("dhri/RawHand", 1000); 
   marker_pub1 = nh.advertise<visualization_msgs::Marker>("corrected_marker", 1);
   marker_pub2 = nh.advertise<visualization_msgs::Marker>("marker", 1);
     	   
@@ -147,9 +149,15 @@ int main(int argc, char** argv)
 	   
 	   past_time = current_time;
 	   std::cout << "The current frame is " << query_index << std::endl;
-	   	   
+	   
+           kdsearch kd_search(b_box.ROI, transformed_model);
+	   kd_search.search();
+	   sensor_msgs::PointCloud2 raw_hand;
+           pcl::toROSMsg(*kd_search.raw_hand, raw_hand);
+	   raw_hand.header.frame_id = frame_id;
+	   pub_raw_hand.publish(raw_hand);
+           	   
 	 }
-	 kdsearch kd_search(b_box.ROI, transformed_model);
        }
        //ros::spin();
        //server.reset();

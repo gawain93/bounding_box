@@ -3,6 +3,7 @@
 
 #include <pcl/point_cloud.h>
 #include <pcl/kdtree/kdtree.h>
+#include <pcl/search/kdtree.h>
 
 #include "trackingbox.h"
 
@@ -16,11 +17,14 @@ public:
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr hand_cloud_kd;
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr transformed_model_kd;
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr raw_hand;
+//   pcl::PointCloud<pcl::PointXYZ>::Ptr hand_cloud_rgb;
+//   pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_model_rgb;
   
   void search();
 private:
   pcl::KdTreeFLANN<pcl::PointXYZRGB> kdtree;
-  const int K = 1;
+  const int K = 100;
+  const float eps = 0.015;
   
   std::vector<int> index_object;
 };

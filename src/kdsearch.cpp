@@ -20,8 +20,9 @@ kdsearch::kdsearch(pcl::PointCloud<pcl::PointXYZRGB>::Ptr hand_cloud,
   std::cout << "The size of search area is: " << hand_cloud_kd -> size() << std::endl;
   std::cout << "The number of points to search is: " << transformed_model_kd -> size() << std::endl;
   
-  kdtree.setInputCloud(hand_cloud_kd);
-  
+  kdtree.setInputCloud(transformed_model);
+  kdtree.setEpsilon(eps);
+  std::cout << "Kd tree already set !" << std::endl;
 }
 
 
@@ -31,6 +32,7 @@ kdsearch::~kdsearch()
 
 void kdsearch::search()
 {
+//   std::cout << "search epsilon precision is: " << kdtree.getEpsilon() << std::endl ;
   int cloud_size = hand_cloud_kd -> size();
   raw_hand.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
   for (int i = 0; i < cloud_size; i++)
@@ -38,17 +40,34 @@ void kdsearch::search()
 //     pointKNNSquareDistance.clear();
 //     pointIdxKNNSearch.clear();
     pcl::PointXYZRGB searchPoint = hand_cloud_kd -> points[i];
-    std::vector<int> pointIdxKNNSearch(K);
-    std::vector<float> pointKNNSquareDistance(K);
-    int num_found = kdtree.nearestKSearch(searchPoint, K, pointIdxKNNSearch, pointKNNSquareDistance);
+//     std::vector<int> pointIdxKNNSearch(K);
+//     std::vector<float> pointKNNSquareDistance(K);
+//     int num_found = kdtree.nearestKSearch(searchPoint, K, pointIdxKNNSearch, pointKNNSquareDistance);
+    
+    std::vector<int> pointIdxRadiusSearch;
+    std::vector<float> pointRadiusSquaredDistance;
+    int num_found = kdtree.radiusSearch (searchPoint, eps , pointIdxRadiusSearch, pointRadiusSquaredDistance);
+    
     if (num_found)
     {
        index_object.push_back(1);
-       raw_hand -> push_back(hand_cloud_kd -> points[i]);
+       std::cout << "current searched point is " << searchPoint.x << " " << searchPoint.y << " " << searchPoint.z << std::endl;
+       /*
+       for (size_t i = 0; i < pointIdxKNNSearch.size (); ++i)
+             std::cout << "    "  <<   transformed_model_kd->points[  pointIdxKNNSearch[i] ].x 
+                       << " " << transformed_model_kd->points[  pointIdxKNNSearch[i] ].y 
+                       << " " << transformed_model_kd->points[  pointIdxKNNSearch[i] ].z 
+                       << " (squared distance: " << pointKNNSquareDistance[i] << ")" << std::endl;
+       */
+       std::cout << "The largest error is: " << *std::max_element( pointRadiusSquaredDistance.begin(), pointRadiusSquaredDistance.end()) << std::endl;
+       std::cout << "The smallest error is " << *std::min_element( pointRadiusSquaredDistance.begin(), pointRadiusSquaredDistance.end()) << std::endl;
+       // change the distance threshold
     }
     else
     {
+       raw_hand -> points.push_back(hand_cloud_kd -> points[i]);
        index_object.push_back(0);
     }
   }
+  std::cout << "There are " << raw_hand -> points.size() << " points in raw hand."<< std::endl;
 }

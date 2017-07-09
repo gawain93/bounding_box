@@ -98,10 +98,16 @@ thrust/host_vector.h
 thrust/device_vector.h
 -
 
+/home/dhri-dz/catkin_ws/src/test_use/src/kdsearch.cpp
+kdsearch.h
+/home/dhri-dz/catkin_ws/src/test_use/src/kdsearch.h
+
 /home/dhri-dz/catkin_ws/src/test_use/src/kdsearch.h
 pcl/point_cloud.h
 -
 pcl/kdtree/kdtree.h
+-
+pcl/search/kdtree.h
 -
 trackingbox.h
 /home/dhri-dz/catkin_ws/src/test_use/src/trackingbox.h
