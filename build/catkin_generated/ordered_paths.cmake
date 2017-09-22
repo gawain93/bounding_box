@@ -1,1 +1,1 @@
-set(ORDERED_PATHS "/opt/ros/indigo/lib")
+set(ORDERED_PATHS "/opt/ros/indigo/include;/usr/include;/usr/include/eigen3;/usr/include/pcl-1.7;/usr/include/ni;/usr/include/vtk-5.8")

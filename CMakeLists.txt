@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(test_use)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 2 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(CUDA QUIET REQUIRED)
 
@@ -128,6 +128,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -140,6 +141,7 @@ set( sources
      src/trackingbox.cpp
      src/csfeature.cpp
      src/kdsearch.cpp
+     src/datacreate.cpp
 )
 
 set( headers
@@ -148,6 +150,7 @@ set( headers
      src/csfeature.h
      src/common.h
      src/kdsearch.h
+     src/datacreate.h
 )
 
 ## Add cmake target dependencies of the library

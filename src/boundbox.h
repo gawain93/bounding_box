@@ -30,6 +30,10 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+extern std::vector<cv::Point2i> TwoDim_coord;
+extern std::vector<cv::Point2i> Test_coord;
+extern std::vector<cv::Point2i> after_bounding_box;
+
 class boundbox
 {
 public:
@@ -61,6 +65,9 @@ public:
   Eigen::Vector3f middle_point;
   Eigen::Vector3f corrected_middle_point;
   
+  std::vector<cv::Point2i> temp1;
+  std::vector<cv::Point2i> temp2;
+  
   enum Input_Edge
   {
     u = 0,
@@ -69,6 +76,8 @@ public:
     r = 3
   };
   Input_Edge ie;
+  
+  std::vector <size_t> frame_mask;                                 // look up table of if the pixel is hand or not, 1 and 0
   
   // The following are for the kalman filter
   // The state variables are x,y,z, v_x,v_y,v_z
@@ -85,11 +94,10 @@ private:
   float box_size = 0.2; 
   
   std::vector<size_t> hand_index;                                  // to store the index of the point that is hand 
-  std::vector <size_t> frame_mask;                                 // look up table of if the pixel is hand or not, 1 and 0
   
   cv::KalmanFilter* KF;
     
-  static const float depth_threshold = 0.03;                       //  Threshold for the depth differences
+  static const float depth_threshold = 0.01;                       //  Threshold for the depth differences, 0.01
   static const int frame_height = 480;                             // size of the frame
   static const int frame_width = 640;
   

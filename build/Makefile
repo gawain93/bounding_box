@@ -925,6 +925,30 @@ src/csfeature.cpp.s:
 	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/csfeature.cpp.s
 .PHONY : src/csfeature.cpp.s
 
+src/datacreate.o: src/datacreate.cpp.o
+.PHONY : src/datacreate.o
+
+# target to build an object file
+src/datacreate.cpp.o:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/datacreate.cpp.o
+.PHONY : src/datacreate.cpp.o
+
+src/datacreate.i: src/datacreate.cpp.i
+.PHONY : src/datacreate.i
+
+# target to preprocess a source file
+src/datacreate.cpp.i:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/datacreate.cpp.i
+.PHONY : src/datacreate.cpp.i
+
+src/datacreate.s: src/datacreate.cpp.s
+.PHONY : src/datacreate.s
+
+# target to generate assembly for a file
+src/datacreate.cpp.s:
+	$(MAKE) -f CMakeFiles/test_use.dir/build.make CMakeFiles/test_use.dir/src/datacreate.cpp.s
+.PHONY : src/datacreate.cpp.s
+
 src/kdsearch.o: src/kdsearch.cpp.o
 .PHONY : src/kdsearch.o
 
@@ -1072,6 +1096,9 @@ help:
 	@echo "... src/csfeature.o"
 	@echo "... src/csfeature.i"
 	@echo "... src/csfeature.s"
+	@echo "... src/datacreate.o"
+	@echo "... src/datacreate.i"
+	@echo "... src/datacreate.s"
 	@echo "... src/kdsearch.o"
 	@echo "... src/kdsearch.i"
 	@echo "... src/kdsearch.s"

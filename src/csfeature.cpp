@@ -38,7 +38,7 @@ CsFeature CsFeatureEstimation::compute(CloudPtr &cloud)
     outF.hist.resize((m_xNr+1) * (m_yNr+1) * (m_zNr+1) * 8);
 
     std::fill(outF.hist.begin(), outF.hist.end(), 0);
-    for (size_t i=0; i<cloud->points.size(); ++i){
+    for (size_t i=0; i<cloud->points.size(); ++i){                       // color feature for every point in the model
         PointT pt = cloud->points[i];
         int xInd, yInd, zInd, theInd;
         xInd = (int)floor( (pt.x - m_boxMin[0])/m_gridsize );

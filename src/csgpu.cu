@@ -25,7 +25,7 @@ __device__  unsigned int  my_rand(unsigned int *seed) {
 
 
 
-__global__ void run(int xNr, int yNr, int zNr,int partNr,
+__global__ void run(int xNr, int yNr, int zNr,int partNr,                 // inputs: number of grids in x,y and z , max and min length in 3 dimensitions
                     float3 minPt, float3 maxPt,float gridsize,
                     float3 *cloudpos,  float3 *cloudhsv, int cloudSize,
                     float3 *partpos,  float3 *partrot, float *d_refhist, float *d_weights, float modelsize)
@@ -274,7 +274,7 @@ std::vector<float> CSGPU::compute()
 
 
 //    cudaMalloc((void **) &d_weights, partNr*sizeof(float));
-    cudaMemset(d_weights, 0.f, partNr*sizeof(float));
+    cudaMemset(d_weights, 0.f, partNr*sizeof(float));               //  fill the memory for d_weights
 
 
 //    float3 *d_cloudpos, *d_cloudhsv, *d_partpos, *d_partrot;
@@ -307,7 +307,7 @@ std::vector<float> CSGPU::compute()
     int threadDim = std::min( (int)cloudSize,  1024);
 //    dim3 block(20,20);
 
-     run<<<partNr, threadDim>>>(xNr, yNr, zNr, partNr,
+     run<<<partNr, threadDim>>>(xNr, yNr, zNr, partNr,             // each particle is a block and the number of cloud stands for threads
                      minPt, maxPt, gridsize,
                      d_cloudpos,  d_cloudhsv, cloudSize,
                           d_partpos, d_partrot, d_refhist, d_weights, float(modelsize));
@@ -358,7 +358,7 @@ void CSGPU::uploadRefHist()
 void CSGPU::uploadCurrentCloud(int cloudSize_)
 {
     cloudSize = cloudSize_;
-    cloudpos = (float3 *)malloc(cloudSize * sizeof(float3));
+    cloudpos = (float3 *)malloc(cloudSize * sizeof(float3));  //Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
     cloudhsv = (float3 *)malloc(cloudSize * sizeof(float3));
 }
 

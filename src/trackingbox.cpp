@@ -3,8 +3,9 @@
 trackingbox::trackingbox()
 {
   initpose= Affine3f::Identity();
-  initpose(2,3)=0.9f;
-  initpose(1,3)=0.1f;
+  initpose(2,3)=1.0f;   // 0.9
+  initpose(1,3)=0.18f;  // 0.1
+  initpose(0,3)=0.0f;  // 0.1
   
   m_cnt = 0;
   m_poseForVis.zero();
@@ -40,7 +41,7 @@ void trackingbox::setModel()
   
   for(size_t i=0; i<model->points.size();i++)
   {               
-      model->points[i].y +=0.04f;
+      model->points[i].y +=0.04f;      // slightly change the model coordinate 
   }
   
    csest.initBox(model);
@@ -210,7 +211,7 @@ void trackingbox::run(PointCloud< PointXYZRGB >::Ptr scene)
   cout<<"accelaration is: "<<m_acc<<endl<<endl;
   
   m_scene.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
-  tracking::ParticleXYZRPY predict = m_finalParticle + m_vel + m_acc*0.f;
+  tracking::ParticleXYZRPY predict = m_finalParticle + m_vel + m_acc*0.5f;
 
   int xCor = (int)round(570.f/predict.z * predict.x + 319.5);      // transform to the camera coordinate
   int yCor = (int)round(570.f/predict.z * predict.y + 239.5);
@@ -221,7 +222,7 @@ void trackingbox::run(PointCloud< PointXYZRGB >::Ptr scene)
   int ct=0;
   for(size_t i=0; i<modelPixelSize*modelPixelSize; i++)
   {
-    if (ct>100) break;
+    if (ct>150) break;
     int x_ = min(max(rand() % (2*modelPixelSize) + xB, 0),639);
     int y_ = min(max(rand() % (2*modelPixelSize) + yB, 0),479);
     if ( (scene->points[y_*640+x_].getVector3fMap()
@@ -235,7 +236,7 @@ void trackingbox::run(PointCloud< PointXYZRGB >::Ptr scene)
   vector<int> indices;
   pcl::removeNaNFromPointCloud(*m_scene, *m_scene, indices);
  //do the actual particle filtering
- float vardist=0.012f, varang=2.405f;
+ float vardist=0.012f, varang=2.0f;     // 1.8f
  resample(vardist, varang,true);
  weight();
  
@@ -264,7 +265,7 @@ void trackingbox::resample(float varDist, float varAng, bool firstRun)
     if (!firstRun){motionratio = 0.f;}
 
     int motionnum = (int)floor(m_particlenum * motionratio);
-    tracking::ParticleXYZRPY motion = m_vel+m_acc*0.2f;
+    tracking::ParticleXYZRPY motion = m_vel+m_acc*0.f;
     for (size_t i=0; i<motionnum; i++){
         int index = std::lower_bound(cumulative.begin(), cumulative.end(), die()) - cumulative.begin();
         templist[i] = sampleWithVar(m_particles[index], varDist, varAng,motion, true); // dist in m, ang in degrees
@@ -286,7 +287,7 @@ ParticleXYZRPY trackingbox::sampleWithVar(ParticleXYZRPY part, float varDist, fl
     if (motionmode)
     {
         Affine3f partMat= (part+motion).toEigenMatrix();
-        float fach=3.6f;
+        float fach=2.6f;
         temp.x = tracking::sampleNormal(0.f, pow(fabs(m_velerr.x)*fach+varDist, 2) );
         temp.y = tracking::sampleNormal(0.f, pow(fabs(m_velerr.y)*fach+varDist, 2) );
         temp.z = tracking::sampleNormal(0.f, pow(fabs(m_velerr.z)*fach+varDist, 2) );
@@ -299,7 +300,7 @@ ParticleXYZRPY trackingbox::sampleWithVar(ParticleXYZRPY part, float varDist, fl
     } 
     else
     {
-        varDist *=0.5f; varAng*=0.5f;
+        varDist *=1.5f; varAng*=1.5f;
         temp.x = tracking::sampleNormal(0, pow(varDist, 2) );
         temp.y = tracking::sampleNormal(0, pow(varDist, 2) );
         temp.z = tracking::sampleNormal(0, pow(varDist, 2) );
@@ -382,7 +383,7 @@ void trackingbox::weight()
         }
         finalq = Quaternion<float>(finalq.w()+10000.f*q.w()*m_particles[i].weight, finalq.x()+10000.f*q.x()*m_particles[i].weight,
                                    finalq.y()+10000.f*q.y()*m_particles[i].weight, finalq.z()+10000.f*q.z()*m_particles[i].weight);
-        m_finalParticle = m_finalParticle + m_particles[i] * m_particles[i].weight;
+        m_finalParticle = m_finalParticle + m_particles[i] * m_particles[i].weight;     //the final pose estimated by the particles
     }
     finalq = Quaternion<float>(finalq.w()/10000.f, finalq.x()/10000.f,
                                finalq.y()/10000.f, finalq.z()/10000.f);

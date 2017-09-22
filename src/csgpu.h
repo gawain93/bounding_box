@@ -32,7 +32,7 @@ public:
     size_t xNr, yNr, zNr;
     float3 minPt, maxPt;
     float gridsize;
-    float *refhist;
+    float *refhist;                        // color spatial feature of the  model, as reference
 //    thrust::device_vector<float3> cloudpos;
     float3 *cloudpos;
     float3 *cloudhsv;
@@ -45,7 +45,7 @@ public:
     float *d_weights, *weights;
 
     //gpu varibale
-    float *d_refhist;
+    float *d_refhist;         // pointer in cuda for reference feature of the model
 
     void uploadCurrentCloud(int cloudSize_);
     void uploadRefHist();

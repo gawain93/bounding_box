@@ -1,5 +1,9 @@
 #include "boundbox.h"
 
+std::vector<cv::Point2i> TwoDim_coord;
+std::vector<cv::Point2i> Test_coord;
+std::vector<cv::Point2i> after_bounding_box;
+
 boundbox::boundbox(std::string fid)
 {
   frame_id=fid;
@@ -43,6 +47,8 @@ boundbox::boundbox(std::string fid)
   KF->measurementNoiseCov = cv::Mat::eye(MeasureSize, MeasureSize, type)*2e-1;  //cv::setIdentity(KF->measurementMatrix, cv::Scalar(1e-1));
   
   ROI.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
+  
+  TwoDim_coord.clear();
 }
 
 
@@ -51,12 +57,19 @@ void boundbox::bounding_box()
   int num_interest = 0;                          
   interest_points.reset(new pcl::PointCloud<pcl::PointXYZRGB>);
   frame_index.clear();
+  TwoDim_coord.clear();
+  Test_coord.clear();
+  after_bounding_box.clear();
+  temp1.clear();
+  temp2.clear();
+  cv::Mat test_img;
+  test_img = cv::Mat::ones(frame_height,frame_width,CV_32F);
   
   for (size_t h = 0; h < frame_height; h++)
   {
     for (size_t w=0; w<frame_width; w++)
     {
-      if (pcl_current_frame -> points[h*frame_width + w].z == NAN)
+      if (pcl_current_frame -> points[h*frame_width + w].z != pcl_current_frame -> points[h*frame_width + w].z)    // Modified for testing NAN
       {
 	frame_index.push_back(0);
 	continue;
@@ -66,12 +79,23 @@ void boundbox::bounding_box()
 	frame_index.push_back(num_interest++);
 	interest_points->points.push_back(pcl_current_frame -> points[h*frame_width + w]);
 	first_hand_found = 1;
+	cv::Point2i twoD_coord;
+	twoD_coord.x = h;
+	twoD_coord.y = w;
+	temp1.push_back(twoD_coord);     // temp1 it is
+	Test_coord.push_back(twoD_coord);
+	int x = int(fx / pcl_current_frame->points[h*frame_width + w].z * pcl_current_frame -> points[h*frame_width + w].x + cx);
+        int y = int(fy / pcl_current_frame -> points[h*frame_width + w].z * pcl_current_frame -> points[h*frame_width + w].y + cy);
+// 	std::cout << "x = " << x << "y = " << y << std::endl; 
+	test_img.at<float>(y,x) = 255.0;
 	continue;
       }
       frame_index.push_back(0);
     }
   }
-  std::cout << "There are " << frame_index.size() << "points in total" << std::endl;
+  cv::imwrite("/home/dhri-dz/savedata/test.jpg", test_img);
+  std::cout << "There are " << frame_index.size() << " points in total" << std::endl;
+  std::cout << "There remains " << temp1.size() << " points in region of interest " << std::endl;
 }
 
 
@@ -81,8 +105,8 @@ void boundbox::largest_cluster()
   tree -> setInputCloud(interest_points);       
   std::vector<pcl::PointIndices> cluster_indices;
   pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
-  ec.setClusterTolerance(0.03);
-  ec.setMinClusterSize(50);
+  ec.setClusterTolerance(0.03); // 0.03 for original camera distance
+  ec.setMinClusterSize(1000);
   ec.setMaxClusterSize(30000);
   ec.setSearchMethod(tree);
   ec.setInputCloud(interest_points);          
@@ -90,7 +114,10 @@ void boundbox::largest_cluster()
   
   hand_index.clear();
   if (cluster_indices.size() == 0)
+  {
     std::cout << "no cluster found" << std::endl;
+    first_hand_found = 0;
+  }
   else
   {
   std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); 
@@ -98,9 +125,12 @@ void boundbox::largest_cluster()
   for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit)
   {
        Hand_points -> points.push_back(interest_points->points[*pit]);      
-       hand_index.push_back(*pit-1);
+       hand_index.push_back(*pit-1);            // is the pt the index in the original cloud(bounding box)?
+       temp2.push_back(temp1[*pit]);
+       after_bounding_box.push_back(temp1[*pit]);
   }
   std::cout << Hand_points->size() << "points in hand cluster" << std::endl;
+  std::cout << "There remeins " << temp2.size() << " points in region of interest " << std::endl;
   
   frame_mask.clear();
   for (int h = 0; h < frame_height; h++)
@@ -117,8 +147,7 @@ void boundbox::largest_cluster()
 	  frame_mask.push_back(0);
       }
     }
-  }
-
+   }
   }
 }
 
@@ -144,7 +173,7 @@ void boundbox::find_input_edge()
 	break;
       }
     }
-
+    
     for (int h=0; h<frame_height; h++)
     {
       if (frame_mask[h*frame_width+w]==1)
@@ -156,7 +185,7 @@ void boundbox::find_input_edge()
     }
   }
   up_dis = std::accumulate(distance1.begin(),distance1.end(),0.0)/float(distance1.size());
-  
+  std::cout << "error flag" << std::endl;
   std::vector<int> distance2;
   for (int w=0; w<640; w++)
   {
@@ -367,7 +396,9 @@ void boundbox::add_bounding_box()
     {
       //std::cout << "distance is" <<  sqrt(pow((xCor-x),2) + pow((yCor - y),2)) << std::endl;
       ROI->points.push_back(Hand_points -> points[i]);
+      TwoDim_coord.push_back(temp2[i]);
     }
   }
+  std::cout << "There are " << TwoDim_coord.size() << " points in Region of interest" << std::endl;
 }
 
