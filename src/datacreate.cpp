@@ -179,7 +179,10 @@ void datacreate::mask_create()
 //   depth_map_vis.at<Vector3f>(middle_x_2d, middle_y_2d)[1] = 255;
 //   depth_map_vis.at<Vector3f>(middle_x_2d, middle_y_2d)[2] = 0;
  
-  cv::imwrite("/home/dhri-dz/savedata/depthmap/depthmap_" + os.str() + ".jpg", depth_map_vis);
+  cv::imwrite("/home/dhri-dz/savedata/depthmapvis/depthmapvis_" + os.str() + ".jpg", depth_map_vis);
+  cv::FileStorage fs("/home/dhri-dz/savedata/depthmap/depthmap_" + os.str() + ".yml", cv::FileStorage::WRITE);
+  fs << 'depth_map' << depth_map;
+  fs.release();
   cv::imwrite("/home/dhri-dz/savedata/rgbmap/rgbmap_" + os.str() + ".jpg", rgb_map);
   cv::imwrite("/home/dhri-dz/savedata/test/compare_" + os.str() + ".jpg", rgb_map_compare);
 //   fs << "depth map" + os.str()  << depth_map;
